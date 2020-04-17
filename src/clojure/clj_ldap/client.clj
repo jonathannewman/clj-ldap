@@ -31,13 +31,13 @@
             PostReadResponseControl
             SimplePagedResultsControl])
   (:import [com.unboundid.util.ssl
-            SSLUtil
             TrustAllTrustManager
-            TrustStoreTrustManager
-            HostNameSSLSocketVerifier]))
+            HostNameSSLSocketVerifier])
+  (:import [com.puppetlabs.ldap Utils]))
+
 
 ;;======== Helper functions ====================================================
-
+(set! *warn-on-reflection* true)
 (def not-nil? (complement nil?))
 
 (defn encode [attr]
@@ -103,15 +103,18 @@
   "If the trust-store is truthy, returns a TrustStoreTrustManager created with
   it; otherwise, returns a TrustAllTrustManager."
   [trust-store]
-  (if trust-store
-    (TrustStoreTrustManager. trust-store)
-    (TrustAllTrustManager.)))
+  (println "HERE!")
+  (println (class trust-store))
+  (Utils/trustManagerToSSLUtil trust-store))
+  ;(if trust-store
+    ;(new SSLUtil ^"[Ljavax.net.ssl.TrustManager;"
+     ;             trust-store)
+  ;;  (SSLUtil. (TrustAllTrustManager.)))
 
 (defn- create-ssl-factory
   "Returns a SSLSocketFactory object"
   [{:keys [trust-store]}]
-  (let [trust-manager (create-trust-manager trust-store)
-        ssl-util (SSLUtil. trust-manager)]
+  (let [ssl-util (create-trust-manager trust-store)]
     (.createSSLSocketFactory ssl-util)))
 
 (defn- host-as-map
