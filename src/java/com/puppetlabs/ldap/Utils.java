@@ -8,7 +8,7 @@ import javax.net.ssl.TrustManager;
 public class Utils {
 
     public static SSLUtil trustManagerToSSLUtil(final TrustManager[] tm) {
-        return new SSLUtil();
+        return new SSLUtil(tm);
     }
 
     public static SSLUtil trustStoreToSSLUtil(String ts) {
